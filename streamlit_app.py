@@ -17,25 +17,31 @@ prompt = st.text_input("프롬프트를 입력하세요:")
 size_options = ["256x256", "512x512", "1024x1024"]
 selected_size = st.selectbox("이미지 크기를 선택하세요:", size_options)
 
-# 이미지 스타일 선택 드롭다운
-style_options = ["natural", "vivid"]
+# 확장된 이미지 스타일 선택 드롭다운
+style_options = [
+    "natural", "vivid", "impressionist", "watercolor", "oil painting", 
+    "sketch", "digital art", "photography", "abstract", "surrealist", 
+    "minimalist", "pop art"
+]
 selected_style = st.selectbox("이미지 스타일을 선택하세요:", style_options)
 
 if st.button("이미지 생성"):
     if prompt:
         try:
+            # 선택된 스타일을 프롬프트에 추가
+            styled_prompt = f"{prompt} in {selected_style} style"
+            
             kwargs = {
-                "prompt": prompt,
+                "prompt": styled_prompt,
                 "n": 1,
-                "size": selected_size,
-                "style": selected_style
+                "size": selected_size
             }
             # OpenAI API를 사용하여 이미지 생성
             response = client.images.generate(**kwargs)
             # 응답에서 이미지 URL 추출
             image_url = response.data[0].url
             # 생성된 이미지 표시
-            st.image(image_url, caption="생성된 이미지", use_column_width=True)
+            st.image(image_url, caption=f"생성된 이미지 ({selected_style} 스타일)", use_column_width=True)
         except Exception as e:
             st.error(f"이미지 생성 중 오류 발생: {e}")
     else:
